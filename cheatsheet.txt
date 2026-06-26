@@ -1,0 +1,18 @@
+[진행 방향을 모를 때]
+- "What should I do first?"
+- "내가 새로운 기능을 추가하고 싶은데, 코딩을 시작하기 전에 내가 미리 정해줘야 할 내용이나 질문 리스트를 먼저 만들어줘."
+
+[화면이 안 바뀌거나 이상할 때]
+- "What I just asked for isn't showing on the screen. Check it and fix it."
+- "Roll it back to the state before the change you just made."
+- "버튼이나 여백 같은 디자인이 너무 밋밋해. 최신 트렌드에 맞게 세련된 UI로 알아서 개선해 줘."
+
+[에러(빨간 글씨)가 발생했을 때]
+- "Look at this error and fix it along with the cause."
+- "지금 계속 같은 에러가 반복되고 있어. 이 접근 방식을 버리고 완전히 다른 쉬운 방법으로 우회해서 해결해 봐."
+- "이 에러를 고치기 위해 어떤 코드를 수정할 건지 나한테 한국어로 먼저 설명해 줘."
+
+[기타 필수 명령어]
+- "Please answer in Korean."
+- "Run this app on my computer. Open it in the browser so I can try it right away."
+- "Put index.html at the top level of the folder and tidy it up so it opens right away."
