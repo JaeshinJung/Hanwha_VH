@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>LIFEPLUS 모험 | 2D Survivors</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700;900&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="game.css" />
+</head>
+<body>
+  <div class="game-stage">
+    <!-- The play field -->
+    <canvas id="game-canvas" width="800" height="520"></canvas>
+
+    <!-- HUD overlay -->
+    <div class="hud">
+      <div class="hud-top">
+        <div class="hud-left">
+          <span class="hud-wave">WAVE <b id="hud-wave">1</b></span>
+        </div>
+        <div class="hud-timer" id="hud-timer">30</div>
+        <div class="hud-right">
+          <span class="hud-gold">💰 <b id="hud-gold">0</b> G</span>
+        </div>
+      </div>
+
+      <!-- Boss HUD: shown only during boss waves (10/20/30) -->
+      <div class="boss-hud" id="boss-hud">
+        <div class="boss-name" id="boss-name">보스</div>
+        <div class="boss-hp-bar">
+          <div class="boss-hp-fill" id="boss-hp-fill"></div>
+        </div>
+      </div>
+
+      <div class="hud-hp">
+        <div class="hud-hp-label">
+          <span>HP</span>
+          <span id="hud-hp-text">100 / 100</span>
+        </div>
+        <div class="hud-hp-bar">
+          <div class="hud-hp-fill" id="hud-hp-fill"></div>
+        </div>
+      </div>
+
+      <div class="hud-stats" id="hud-stats">
+        <span>⚔ <b id="stat-dmg">20</b></span>
+        <span>🧲 <b id="stat-magnet">100</b></span>
+        <span>👟 <b id="stat-speed">160</b></span>
+      </div>
+    </div>
+
+    <p class="controls-hint">WASD / 방향키·마우스·터치로 이동 · 공격은 자동 · <b>ESC</b> : 이번 웨이브 골드 포기 후 성적표 복귀</p>
+
+    <!-- ============ INTERMISSION SHOP MODAL ============ -->
+    <div class="modal-overlay" id="shop-modal" hidden>
+      <div class="modal">
+        <div class="modal-head">
+          <h2 class="modal-title">WAVE CLEAR!</h2>
+          <p class="modal-sub">LIFEPLUS 정비소</p>
+          <p class="modal-gold">보유 골드 : <b id="shop-gold">0</b> G</p>
+        </div>
+
+        <!-- Consumable: Hanwha Life energy potion -->
+        <div class="shop-section">
+          <p class="shop-section-title">소모성 아이템</p>
+          <button type="button" class="potion-btn" id="buy-potion" data-cost="30">
+            <span class="potion-emoji">⚡</span>
+            <span class="potion-body">
+              <span class="potion-name">한화생명 피로회복제</span>
+              <span class="potion-desc">현재 체력을 최대치의 50% 즉시 회복</span>
+            </span>
+            <span class="potion-cost">30 G</span>
+          </button>
+        </div>
+
+        <!-- Permanent wellness upgrades (write to localStorage) -->
+        <div class="shop-section">
+          <p class="shop-section-title">웰니스 지표 강화 (등급 +1 · 성적표 연동)</p>
+          <div class="upgrade-grid">
+            <button type="button" class="upgrade-btn" data-upgrade="pt" data-cost="150">
+              <span class="up-title">🏋️ 헬스장 PT 등록</span>
+              <span class="up-desc">신체 등급 +1 · Max HP↑</span>
+              <span class="up-cost">150 G</span>
+            </button>
+            <button type="button" class="upgrade-btn" data-upgrade="finance" data-cost="150">
+              <span class="up-title">📚 재테크 스터디</span>
+              <span class="up-desc">재무 등급 +1 · 공격력↑</span>
+              <span class="up-cost">150 G</span>
+            </button>
+            <button type="button" class="upgrade-btn" data-upgrade="career" data-cost="150">
+              <span class="up-title">💼 직무 공부·야근 조율</span>
+              <span class="up-desc">커리어 등급 +1 · 이동속도↑</span>
+              <span class="up-cost">150 G</span>
+            </button>
+            <button type="button" class="upgrade-btn" data-upgrade="mental" data-cost="150">
+              <span class="up-title">🧘 마음 챙김 명상</span>
+              <span class="up-desc">정신 등급 +1 · 자석범위↑</span>
+              <span class="up-cost">150 G</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-next-wave" id="btn-next-wave">다음 웨이브 시작 ▶</button>
+          <button type="button" class="btn-return" id="btn-return">성적표로 돌아가기 (저장)</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ PAUSE OVERLAY (ESC) ============ -->
+    <div class="modal-overlay" id="pause-modal" hidden>
+      <div class="modal modal-gameover">
+        <h2 class="modal-title pause-title">일시정지</h2>
+        <p class="modal-sub">잠시 숨 고르는 중...</p>
+        <p class="go-text">‘계속하기’는 이어서 플레이, ‘성적표로 돌아가기’는 <b>이번 웨이브에서 모은 골드를 포기</b>합니다.</p>
+        <div class="modal-actions">
+          <button type="button" class="btn-next-wave" id="btn-resume">계속하기 ▶</button>
+          <button type="button" class="btn-return" id="btn-return-pause">성적표로 돌아가기 (저장)</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ GAME OVER OVERLAY ============ -->
+    <div class="modal-overlay" id="gameover-modal" hidden>
+      <div class="modal modal-gameover">
+        <h2 class="modal-title">GAME OVER</h2>
+        <p class="modal-sub">웨이브 <b id="go-wave">1</b> 에서 쓰러졌습니다.</p>
+        <p class="go-text">이번 웨이브에서 얻은 골드는 사라지고, 이전까지 모은 골드와 강화는 저장됩니다.</p>
+        <div class="modal-actions">
+          <button type="button" class="btn-return" id="btn-return-go">성적표로 돌아가기 (저장)</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ FUTURE ME 2056 ENDING MODAL ============ -->
+    <div class="modal-overlay" id="ending-modal" hidden>
+      <div class="ending-wrap">
+        <!-- html2canvas capture target -->
+        <div class="ending-card" id="ending-card">
+          <div class="ending-border">
+            <div class="ending-emblem">2056</div>
+            <p class="ending-eyebrow">FUTURE ME · 인생 졸업장</p>
+            <h2 class="ending-title">30년 후, 나의 자화상</h2>
+            <p class="ending-name"><b id="ending-name">홍길동</b> 님의 미래</p>
+
+            <p class="future-me-text" id="future-me-text"></p>
+
+            <div class="ending-grades" id="ending-grades"></div>
+
+            <p class="ending-foot">Hanwha Life · LIFEPLUS — 2056 인생 졸업장</p>
+          </div>
+        </div>
+
+        <div class="ending-actions">
+          <button type="button" class="btn-next-wave" id="btn-download-ending">엔딩 카드 이미지 다운로드</button>
+          <button type="button" class="btn-return" id="btn-return-ending">성적표 페이지로 복귀 (최종 저장)</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- html2canvas: captures the ending card as a PNG -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

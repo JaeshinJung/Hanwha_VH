@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LIFEPLUS 인생 성적표 | Hanwha Life</title>
+  <!-- Google Fonts: serif display + sans body for an editorial, premium feel -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700;900&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="index.css" />
+</head>
+<body>
+  <header class="app-header">
+    <p class="eyebrow">HANWHA LIFE · LIFEPLUS</p>
+    <h1 class="app-title">LIFEPLUS 인생 성적표</h1>
+    <p class="app-subtitle">나의 하루를 입력하면, LIFEPLUS 4대 웰니스 지표로 인생 성적표가 완성됩니다.</p>
+  </header>
+
+  <main class="layout">
+    <!-- ============ LEFT: INPUT FORM ============ -->
+    <section class="form-panel" aria-label="입력 폼">
+      <h2 class="panel-heading">나의 라이프스타일 입력</h2>
+
+      <!-- Name -->
+      <div class="field">
+        <label for="input-name">이름</label>
+        <input type="text" id="input-name" value="홍길동" maxlength="12" placeholder="이름을 입력하세요" />
+      </div>
+
+      <!-- Status message -->
+      <div class="field">
+        <label for="input-status">한 줄 다짐</label>
+        <input type="text" id="input-status" value="오늘도 갓생 산다!" maxlength="30" placeholder="오늘의 한 줄 다짐" />
+      </div>
+
+      <!-- Sleep hours (slider) -->
+      <div class="field">
+        <label for="input-sleep">
+          하루 평균 수면 시간
+          <span class="value-badge"><span id="value-sleep">7</span>시간</span>
+          <span class="train-plus" id="bonus-sleep"></span>
+        </label>
+        <input type="range" id="input-sleep" min="2" max="12" step="1" value="7" />
+      </div>
+
+      <!-- Monthly savings (number) -->
+      <div class="field">
+        <label for="input-savings">월 저축액 (만 원)</label>
+        <input type="number" id="input-savings" min="0" max="2000" step="10" value="100" />
+      </div>
+
+      <!-- Work hours per week (slider) -->
+      <div class="field">
+        <label for="input-work">
+          주당 근무 시간
+          <span class="value-badge"><span id="value-work">45</span>시간</span>
+          <span class="train-plus" id="bonus-work"></span>
+        </label>
+        <input type="range" id="input-work" min="0" max="100" step="1" value="45" />
+      </div>
+
+      <!-- Exercise per week (select) -->
+      <div class="field">
+        <label for="input-exercise">주당 운동 횟수</label>
+        <select id="input-exercise">
+          <option value="0">0회 (운동과 거리두기)</option>
+          <option value="1">1회</option>
+          <option value="2">2회</option>
+          <option value="3" selected>3회</option>
+          <option value="4">4회</option>
+          <option value="5">5회</option>
+          <option value="6">6회</option>
+          <option value="7">7회 (매일 운동러)</option>
+        </select>
+      </div>
+
+      <!-- Profile photo upload -->
+      <div class="field">
+        <label for="input-photo">프로필 사진</label>
+        <input type="file" id="input-photo" accept="image/*" />
+      </div>
+
+      <!-- Start the 2D Survivors game (saves state to localStorage, then navigates) -->
+      <button type="button" id="btn-game" class="btn-game">🎮 LIFEPLUS 모험 시작</button>
+
+      <!-- Download button (wired up in a later phase) -->
+      <button type="button" id="btn-download" class="btn-download">인생 성적표 다운로드</button>
+
+      <!-- Reset all progress (wave / gold / training bonus) -->
+      <button type="button" id="btn-reset" class="btn-reset">게임 초기화</button>
+    </section>
+
+    <!-- ============ RIGHT: REPORT CARD ============ -->
+    <section class="card-wrapper" aria-label="성적표 미리보기">
+      <article id="report-card" class="report-card">
+        <!-- Card header -->
+        <div class="card-top">
+          <div class="brand-mark">
+            <span class="brand-logo">LIFEPLUS</span>
+            <span class="brand-by">by Hanwha Life</span>
+          </div>
+          <p class="card-eyebrow">WELLNESS REPORT CARD</p>
+          <h2 class="card-title">인생 성적표</h2>
+          <p class="card-date">발행일자 : <span id="report-date">2026. 06. 26</span></p>
+        </div>
+
+        <!-- Profile block -->
+        <div class="card-profile">
+          <div class="profile-photo">
+            <img id="profile-img" src="" alt="" />
+            <span id="profile-placeholder" class="profile-placeholder">PHOTO</span>
+          </div>
+          <div class="profile-info">
+            <p class="profile-name" id="report-name">홍길동</p>
+            <p class="profile-status" id="report-status">오늘도 갓생 산다!</p>
+            <span class="title-badge" id="report-title">균형 잡힌 갓생 모범생</span>
+          </div>
+        </div>
+
+        <!-- LIFEPLUS 4 wellness grades -->
+        <div class="card-grades">
+          <div class="grade-row" data-metric="physical">
+            <div class="grade-label">신체 건강<span class="grade-en">Physical</span></div>
+            <div class="grade-mark" id="grade-physical">A</div>
+            <div class="grade-comment" id="comment-physical">완벽한 컨디션이네요.</div>
+          </div>
+          <div class="grade-row" data-metric="financial">
+            <div class="grade-label">재무 건강<span class="grade-en">Financial</span></div>
+            <div class="grade-mark" id="grade-financial">A</div>
+            <div class="grade-comment" id="comment-financial">든든한 통장의 위엄.</div>
+          </div>
+          <div class="grade-row" data-metric="inspirational">
+            <div class="grade-label">자기개발·커리어<span class="grade-en">Inspirational</span></div>
+            <div class="grade-mark" id="grade-inspirational">A</div>
+            <div class="grade-comment" id="comment-inspirational">열정적인 프로 일잘러.</div>
+          </div>
+          <div class="grade-row" data-metric="mental">
+            <div class="grade-label">정신 건강<span class="grade-en">Mental</span></div>
+            <div class="grade-mark" id="grade-mental">A</div>
+            <div class="grade-comment" id="comment-mental">워라밸의 끝판왕.</div>
+          </div>
+        </div>
+
+        <!-- Overall comment -->
+        <div class="card-overall">
+          <p class="overall-label">종합 의견</p>
+          <p class="overall-text" id="report-overall">균형 잡힌 삶을 살고 계시네요. 이대로만 가면 완벽합니다!</p>
+        </div>
+
+        <!-- Phase 2 placeholder: Hanwha Life insurance discount simulator -->
+        <div class="card-insurance" id="insurance-box" aria-live="polite"></div>
+
+        <!-- Phase 3 placeholder: personalized life prescription -->
+        <div class="card-prescription" id="prescription-box" aria-live="polite"></div>
+
+        <!-- Card footer -->
+        <div class="card-bottom">
+          <span class="stamp">LIFEPLUS 웰니스 인증</span>
+          <span class="signature">Hanwha Life · LIFEPLUS</span>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <!-- Signature warm-orange brand band -->
+  <div class="sunset-stripe"></div>
+
+  <!-- html2canvas: captures the report card as a PNG image (wired in a later phase) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

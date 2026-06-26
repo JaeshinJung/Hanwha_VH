@@ -1,0 +1,650 @@
+/* ============================================================
+   LIFEPLUS 2D Survivors - game.css
+   Theme: modern black + warm orange, with a glassmorphism shop
+   ============================================================ */
+
+:root {
+  --orange: #ff6a13;
+  --orange-deep: #e2540a;
+  --amber: #ffb020;
+  --green: #57e07a;
+  --green-deep: #1f8f3a;
+  --bg: #0d0d10;
+  --surface: #17171c;
+  --hairline: #34343f;
+  --text: #f4f4f6;
+  --text-muted: #a6a6b2;
+  --text-dim: #7a7a86;
+
+  --sans: "Noto Sans KR", system-ui, -apple-system, sans-serif;
+  --serif: "Gowun Batang", "Times New Roman", serif;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--sans);
+  color: var(--text);
+  background:
+    radial-gradient(120% 60% at 50% -10%, rgba(255, 106, 19, 0.18) 0%, rgba(255, 106, 19, 0) 50%),
+    var(--bg);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  overflow: hidden;
+}
+
+/* ---- Stage wraps the canvas + HUD overlay ---- */
+.game-stage {
+  position: relative;
+  width: 100%;
+  max-width: 800px;
+}
+
+#game-canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  image-rendering: pixelated; /* keep the retro dot art crisp when scaled up */
+  background: #0a0a0d;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.55);
+  touch-action: none; /* let JS handle touch as movement, not scroll */
+}
+
+/* ============================================================
+   HUD overlay
+   ============================================================ */
+.hud {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 14px 16px 0;
+  pointer-events: none; /* HUD never blocks the play field */
+}
+
+.hud-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.hud-wave {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--hairline);
+  border-radius: 9999px;
+  padding: 4px 12px;
+}
+
+.hud-wave b {
+  color: var(--orange);
+}
+
+.hud-gold {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--amber);
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--hairline);
+  border-radius: 9999px;
+  padding: 4px 12px;
+}
+
+/* Big readable countdown timer */
+.hud-timer {
+  font-family: var(--serif);
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 1;
+  color: #fff;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8), 0 0 18px rgba(255, 106, 19, 0.35);
+  min-width: 60px;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--hairline);
+  border-radius: 12px;
+  padding: 2px 16px;
+}
+
+.hud-timer.urgent {
+  color: #ff5252; /* last seconds flash red */
+  animation: pulse 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes pulse {
+  from { transform: scale(1); }
+  to { transform: scale(1.12); }
+}
+
+/* HP bar */
+.hud-hp {
+  margin-top: 12px;
+  max-width: 280px;
+}
+
+.hud-hp-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+.hud-hp-bar {
+  height: 16px;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid var(--hairline);
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.hud-hp-fill {
+  height: 100%;
+  width: 100%;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, var(--green-deep) 0%, var(--green) 100%);
+  transition: width 0.2s ease;
+}
+
+.hud-stats {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--text-muted);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+.hud-stats b {
+  color: var(--text);
+}
+
+.controls-hint {
+  position: absolute;
+  bottom: 10px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-dim);
+  pointer-events: none;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+/* ============================================================
+   Modal (glassmorphism)
+   ============================================================ */
+.modal-overlay {
+  position: fixed; /* cover the whole viewport so the modal has full height on mobile */
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  background: rgba(8, 8, 12, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 10;
+}
+
+.modal-overlay[hidden] {
+  display: none;
+}
+
+.modal {
+  width: 100%;
+  max-width: 440px;
+  max-height: 92%;
+  overflow-y: auto;
+  background: rgba(28, 28, 36, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.65);
+  padding: 22px;
+}
+
+.modal-head {
+  text-align: center;
+  margin-bottom: 18px;
+}
+
+.modal-title {
+  font-family: var(--serif);
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--orange);
+  letter-spacing: 1px;
+}
+
+.modal-sub {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  margin-top: 2px;
+}
+
+.modal-gold {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-top: 10px;
+}
+
+.modal-gold b {
+  color: var(--amber);
+  font-size: 16px;
+}
+
+.shop-section {
+  margin-bottom: 18px;
+}
+
+.shop-section-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--text-dim);
+  margin-bottom: 10px;
+}
+
+/* ---- Energy potion (vibrant green / neon orange accent) ---- */
+.potion-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  text-align: left;
+  background: linear-gradient(135deg, rgba(31, 143, 58, 0.35) 0%, rgba(255, 106, 19, 0.25) 100%);
+  border: 1.5px solid var(--green);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: transform 0.08s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+}
+
+.potion-btn:not(:disabled):hover {
+  box-shadow: 0 0 0 2px var(--green) inset, 0 0 18px rgba(87, 224, 122, 0.45);
+}
+
+.potion-btn:not(:disabled):active {
+  transform: translateY(1px);
+}
+
+.potion-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  border-color: #ff5252; /* clear red = cannot afford */
+  border-width: 1.5px;
+}
+
+.potion-emoji {
+  font-size: 28px;
+  filter: drop-shadow(0 0 6px rgba(255, 176, 32, 0.8));
+}
+
+.potion-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.potion-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.potion-desc {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.potion-cost {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--green);
+}
+
+/* ---- Upgrade grid ---- */
+.upgrade-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.upgrade-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  text-align: left;
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: transform 0.08s ease, border-color 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+}
+
+.upgrade-btn:not(:disabled) {
+  border-color: rgba(255, 106, 19, 0.35);
+}
+
+.upgrade-btn:not(:disabled):hover {
+  border-color: var(--orange);
+  box-shadow: 0 0 0 1px var(--orange) inset;
+}
+
+.upgrade-btn:not(:disabled):active {
+  transform: translateY(1px);
+}
+
+.upgrade-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  border-color: rgba(255, 82, 82, 0.4);
+}
+
+.up-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.up-desc {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.up-cost {
+  margin-top: 3px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--amber);
+}
+
+/* ---- Modal action buttons ---- */
+.modal-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.btn-next-wave {
+  height: 50px;
+  font-family: var(--sans);
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, var(--orange) 0%, var(--orange-deep) 100%);
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: filter 0.15s ease, transform 0.05s ease;
+}
+
+.btn-next-wave:hover {
+  filter: brightness(1.08);
+}
+
+.btn-return {
+  height: 46px;
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+.btn-return:hover {
+  border-color: var(--text-muted);
+}
+
+.btn-next-wave:active,
+.btn-return:active {
+  transform: translateY(1px);
+}
+
+/* ---- Game over ---- */
+.modal-gameover {
+  text-align: center;
+  max-width: 380px;
+}
+
+.modal-gameover .modal-title {
+  color: #ff5252;
+}
+
+/* Pause modal reuses the gameover layout but keeps the brand orange title */
+.modal-gameover .modal-title.pause-title {
+  color: var(--orange);
+}
+
+.go-text {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 10px 0 18px;
+}
+
+/* ============================================================
+   Boss HUD (top bar during boss waves)
+   ============================================================ */
+.boss-hud {
+  display: none; /* shown by JS during boss waves */
+  margin: 12px auto 0; /* centered for an imposing presence */
+  max-width: 480px;
+  padding: 0 8px;
+  pointer-events: none;
+}
+
+.boss-name {
+  font-family: var(--serif);
+  font-size: 16px;
+  font-weight: 700;
+  color: #ff6b6b;
+  text-align: center;
+  margin-bottom: 5px;
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9), 0 0 14px rgba(255, 46, 46, 0.5);
+}
+
+.boss-hp-bar {
+  height: 18px;
+  background: rgba(0, 0, 0, 0.7);
+  border: 2px solid #ff2e2e; /* bold, menacing border */
+  border-radius: 9999px;
+  overflow: hidden;
+  box-shadow: 0 0 14px rgba(255, 46, 46, 0.45);
+}
+
+.boss-hp-fill {
+  height: 100%;
+  width: 100%;
+  border-radius: 9999px;
+  /* red neon gradient for the boss bar */
+  background: linear-gradient(90deg, #7a0000 0%, #ff2e2e 55%, #ff7a7a 100%);
+  box-shadow: 0 0 12px rgba(255, 46, 46, 0.8) inset;
+  transition: width 0.2s ease;
+}
+
+/* ============================================================
+   Future Me 2056 ending — gold/silver editorial certificate
+   ============================================================ */
+.ending-wrap {
+  width: 100%;
+  max-width: 440px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.ending-card {
+  background: linear-gradient(160deg, #1a1814 0%, #14130f 100%);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.7);
+}
+
+/* Gold double-frame */
+.ending-border {
+  margin: 8px;
+  padding: 26px 22px 22px;
+  border: 2px solid #d4af37;
+  border-radius: 12px;
+  outline: 1px solid rgba(212, 175, 55, 0.4);
+  outline-offset: 4px;
+  text-align: center;
+  position: relative;
+}
+
+.ending-emblem {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 700;
+  color: #14130f;
+  background: linear-gradient(135deg, #f5d97a 0%, #d4af37 60%, #b8860b 100%);
+  border-radius: 50%;
+  box-shadow: 0 4px 14px rgba(212, 175, 55, 0.5);
+}
+
+.ending-eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: #d4af37;
+}
+
+.ending-title {
+  font-family: var(--serif);
+  font-size: 26px;
+  font-weight: 700;
+  color: #f5e6c8;
+  margin: 4px 0 2px;
+}
+
+.ending-name {
+  font-size: 13px;
+  color: #c9b58a;
+  margin-bottom: 16px;
+}
+
+.ending-name b {
+  color: #f5d97a;
+}
+
+.future-me-text {
+  font-family: var(--serif);
+  font-size: 15px;
+  line-height: 1.7;
+  color: #efe6d2;
+  white-space: pre-line; /* honor the line breaks built in JS */
+  word-break: keep-all;
+  padding: 14px 12px;
+  margin-bottom: 16px;
+  background: rgba(212, 175, 55, 0.06);
+  border-top: 1px solid rgba(212, 175, 55, 0.3);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.ending-grades {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.ending-grade {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 8px 4px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  border-radius: 8px;
+}
+
+.ending-grade .eg-metric {
+  font-size: 10px;
+  color: #c9b58a;
+}
+
+.ending-grade .eg-mark {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 700;
+  color: #f5d97a;
+}
+
+.ending-foot {
+  font-size: 11px;
+  font-style: italic;
+  color: #b89a5c;
+}
+
+.ending-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ============================================================
+   Responsive
+   ============================================================ */
+@media (max-width: 520px) {
+  .hud-timer {
+    font-size: 32px;
+  }
+
+  .upgrade-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .modal-title {
+    font-size: 26px;
+  }
+
+  .controls-hint {
+    font-size: 11px;
+  }
+
+  .ending-title {
+    font-size: 22px;
+  }
+
+  .future-me-text {
+    font-size: 14px;
+  }
+
+  .ending-grades {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+}

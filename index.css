@@ -1,0 +1,682 @@
+/* ============================================================
+   LIFEPLUS 인생 성적표 - index.css
+   Theme: Hanwha LIFEPLUS modern black + signature warm orange
+   ============================================================ */
+
+/* ---- Design tokens ---- */
+:root {
+  /* Brand warm orange */
+  --orange: #ff6a13;
+  --orange-deep: #e2540a;
+  --orange-soft: #ffb46a;
+  --amber: #ffb020;
+
+  /* Modern black surfaces */
+  --bg: #0d0d10;
+  --surface: #17171c; /* card surface */
+  --surface-2: #20202a; /* nested panels / inputs */
+  --surface-3: #2a2a35;
+  --hairline: #34343f;
+
+  /* Text on dark */
+  --text: #f4f4f6;
+  --text-muted: #a6a6b2;
+  --text-dim: #7a7a86;
+
+  /* Grade colors (A bright -> F heavy gray) */
+  --grade-a: #ff6a13;
+  --grade-b: #ffb020;
+  --grade-c: #c8c8d6;
+  --grade-d: #9a9aaa;
+  --grade-f: #787888;
+
+  --serif: "Gowun Batang", "Times New Roman", serif;
+  --sans: "Noto Sans KR", system-ui, -apple-system, sans-serif;
+
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 22px;
+  --shadow-card: 0 18px 50px rgba(0, 0, 0, 0.55);
+}
+
+/* ---- Reset & base ---- */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--sans);
+  color: var(--text);
+  /* Near-black backdrop with a faint warm glow at the top */
+  background:
+    radial-gradient(140% 70% at 50% -20%, rgba(255, 106, 19, 0.18) 0%, rgba(255, 106, 19, 0) 45%),
+    var(--bg);
+  min-height: 100vh;
+  line-height: 1.5;
+  padding: 24px 16px 0;
+}
+
+/* ---- App header ---- */
+.app-header {
+  text-align: center;
+  max-width: 1200px;
+  margin: 8px auto 32px;
+}
+
+.eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: var(--orange);
+}
+
+.app-title {
+  font-family: var(--serif);
+  font-size: 46px;
+  font-weight: 700;
+  line-height: 1.1;
+  margin: 6px 0 10px;
+  color: var(--text);
+}
+
+.app-subtitle {
+  font-size: 15px;
+  color: var(--text-muted);
+}
+
+/* ---- Layout: 2 columns on desktop, stacked on mobile ---- */
+.layout {
+  display: grid;
+  grid-template-columns: minmax(320px, 440px) 1fr;
+  gap: 28px;
+  max-width: 1200px;
+  margin: 0 auto 64px;
+  align-items: start;
+}
+
+/* ============================================================
+   Form panel
+   ============================================================ */
+.form-panel {
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-lg);
+  padding: 28px 24px;
+  position: sticky;
+  top: 24px;
+}
+
+.panel-heading {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: var(--text);
+}
+
+.field {
+  margin-bottom: 18px;
+}
+
+.field label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.value-badge {
+  font-weight: 700;
+  color: var(--orange);
+  background: var(--surface-2);
+  border: 1px solid var(--hairline);
+  border-radius: 9999px;
+  padding: 2px 12px;
+  font-size: 13px;
+}
+
+.field input[type="text"],
+.field input[type="number"],
+.field select {
+  width: 100%;
+  height: 44px;
+  padding: 0 14px;
+  font-family: var(--sans);
+  font-size: 15px;
+  color: var(--text);
+  background: var(--surface-2);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-md);
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.field select {
+  /* keep native dropdown legible on dark */
+  color: var(--text);
+}
+
+.field input[type="text"]::placeholder {
+  color: var(--text-dim);
+}
+
+.field input[type="text"]:focus,
+.field input[type="number"]:focus,
+.field select:focus {
+  border: 2px solid var(--orange);
+}
+
+.field input[type="file"] {
+  width: 100%;
+  min-height: 44px; /* meet 44px touch-target minimum on mobile */
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  color: var(--text-muted);
+  background: var(--surface-2);
+  border: 1px dashed var(--hairline);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  cursor: pointer;
+}
+
+.field input[type="file"]::file-selector-button {
+  margin-right: 12px;
+  padding: 6px 12px;
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  background: var(--orange);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* Range slider styling */
+.field input[type="range"] {
+  width: 100%;
+  height: 44px; /* tall touch target; visible track kept thin via background-clip */
+  padding: 19px 0;
+  -webkit-appearance: none;
+  appearance: none;
+  background: var(--surface-3);
+  background-clip: content-box; /* paint the track only in the 6px content area */
+  border-radius: 9999px;
+  outline: none;
+  cursor: pointer;
+}
+
+.field input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--orange);
+  border: 3px solid var(--surface);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.field input[type="range"]::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--orange);
+  border: 3px solid var(--surface);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+/* Amber (+training) indicator next to a slider's value label
+   (amber distinguishes the bonus from the orange value badge) */
+.train-plus {
+  margin-left: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--amber);
+}
+
+/* (+training) badge appended under the grade letter on the report card */
+.train-badge {
+  display: block;
+  margin-top: 2px;
+  font-family: var(--sans);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--amber);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+/* Reset-progress button */
+.btn-reset {
+  width: 100%;
+  height: 40px;
+  margin-top: 16px; /* set apart from the primary actions above */
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 700;
+  color: #8e8e9a;
+  background: transparent;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.btn-reset:hover {
+  color: #ff6b6b;
+  border-color: #ff6b6b;
+}
+
+.btn-reset:active {
+  transform: translateY(1px);
+}
+
+/* Start-game button (primary CTA into the 2D Survivors game) */
+.btn-game {
+  width: 100%;
+  height: 50px;
+  margin-top: 8px;
+  margin-bottom: 10px;
+  font-family: var(--sans);
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, #1f8f3a 0%, #0f6e6a 100%);
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: filter 0.15s ease, transform 0.05s ease;
+}
+
+.btn-game:hover {
+  filter: brightness(1.1);
+}
+
+.btn-game:active {
+  transform: translateY(1px);
+}
+
+/* Download button */
+.btn-download {
+  width: 100%;
+  height: 50px;
+  margin-top: 8px;
+  font-family: var(--sans);
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, var(--orange) 0%, var(--orange-deep) 100%);
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: filter 0.15s ease, transform 0.05s ease;
+}
+
+.btn-download:hover {
+  filter: brightness(1.08);
+}
+
+.btn-download:active {
+  transform: translateY(1px);
+}
+
+/* ============================================================
+   Report card (dark premium surface)
+   ============================================================ */
+.card-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.report-card {
+  width: 100%;
+  max-width: 480px;
+  background: linear-gradient(180deg, #1b1b21 0%, var(--surface) 60%);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+
+/* Card top with warm-orange accent stripe */
+.card-top {
+  text-align: center;
+  padding: 26px 24px 20px;
+  border-bottom: 1px solid var(--hairline);
+  position: relative;
+}
+
+.card-top::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: linear-gradient(90deg, var(--orange-deep) 0%, var(--orange) 50%, var(--amber) 100%);
+}
+
+/* LIFEPLUS brand mark */
+.brand-mark {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 8px;
+  margin: 4px 0 12px;
+}
+
+.brand-logo {
+  font-size: 18px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  color: var(--orange);
+}
+
+.brand-by {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.card-eyebrow {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  color: var(--text-muted);
+}
+
+.card-title {
+  font-family: var(--serif);
+  font-size: 30px;
+  font-weight: 700;
+  margin: 2px 0 6px;
+  color: var(--text);
+}
+
+.card-date {
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+/* Profile block */
+.card-profile {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 22px 24px;
+}
+
+.profile-photo {
+  width: 84px;
+  height: 84px;
+  flex-shrink: 0;
+  border-radius: var(--radius-md);
+  background: var(--surface-2);
+  border: 2px solid var(--hairline);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* Uploaded photo fills the rounded square without distortion */
+.profile-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  border-radius: inherit;
+  display: none; /* shown by JS once a photo is uploaded */
+}
+
+.profile-placeholder {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--text-dim);
+}
+
+.profile-info {
+  min-width: 0;
+}
+
+.profile-name {
+  font-family: var(--serif);
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--text);
+}
+
+.profile-status {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin: 2px 0 8px;
+  word-break: break-word;
+}
+
+.title-badge {
+  display: inline-block;
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, var(--orange) 0%, var(--orange-deep) 100%);
+  border-radius: 9999px;
+  padding: 4px 12px;
+}
+
+/* Grades */
+.card-grades {
+  padding: 4px 24px 8px;
+}
+
+.grade-row {
+  display: grid;
+  grid-template-columns: 100px 48px 1fr;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0 12px 12px;
+  border-bottom: 1px solid var(--hairline);
+  border-left: 3px solid transparent; /* colored per grade by JS */
+  transition: border-left-color 0.2s ease;
+}
+
+.grade-label {
+  font-size: 15px;
+  font-weight: 700;
+  display: flex;
+  flex-direction: column;
+  color: var(--text);
+}
+
+.grade-en {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 1px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+
+.grade-mark {
+  font-family: var(--serif);
+  font-size: 34px;
+  font-weight: 700;
+  text-align: center;
+  color: var(--grade-c);
+}
+
+.grade-comment {
+  font-size: 13px;
+  color: var(--text-muted);
+  word-break: keep-all;
+}
+
+/* ---- Grade color classes (A bright orange -> F heavy gray) ---- */
+.grade-mark.grade-a { color: var(--grade-a); }
+.grade-mark.grade-b { color: var(--grade-b); }
+.grade-mark.grade-c { color: var(--grade-c); }
+.grade-mark.grade-d { color: var(--grade-d); }
+.grade-mark.grade-f { color: var(--grade-f); }
+
+/* SSS tiers earned through game training — glowing neon marks */
+.grade-mark.grade-s {
+  color: #00e5b0;
+  text-shadow: 0 0 6px #00e5b0, 0 0 14px rgba(0, 229, 176, 0.6);
+}
+.grade-mark.grade-ss {
+  color: #c06bff;
+  text-shadow: 0 0 6px #c06bff, 0 0 16px rgba(192, 107, 255, 0.7);
+}
+.grade-mark.grade-sss {
+  color: #ffd23d;
+  animation: sss-pulse 1.1s ease-in-out infinite alternate;
+}
+@keyframes sss-pulse {
+  from { text-shadow: 0 0 6px rgba(255, 210, 61, 0.4); }
+  to { text-shadow: 0 0 18px rgba(255, 210, 61, 1); }
+}
+
+.grade-row[data-grade="A"] { border-left-color: var(--grade-a); }
+.grade-row[data-grade="B"] { border-left-color: var(--grade-b); }
+.grade-row[data-grade="C"] { border-left-color: var(--grade-c); }
+.grade-row[data-grade="D"] { border-left-color: var(--grade-d); }
+.grade-row[data-grade="F"] { border-left-color: var(--grade-f); }
+.grade-row[data-grade="S"] { border-left-color: #00e5b0; }
+.grade-row[data-grade="SS"] { border-left-color: #c06bff; }
+.grade-row[data-grade="SSS"] { border-left-color: #ffd23d; }
+
+/* Overall comment */
+.card-overall {
+  margin: 14px 24px 4px;
+  padding: 16px;
+  background: var(--surface-2);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-md);
+}
+
+.overall-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--orange);
+  margin-bottom: 6px;
+}
+
+.overall-text {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  word-break: keep-all;
+}
+
+/* ---- Phase 2/3 placeholders: stay invisible until JS fills them ---- */
+.card-insurance,
+.card-prescription {
+  margin: 12px 24px 0;
+}
+
+.card-insurance:empty,
+.card-prescription:empty {
+  display: none;
+}
+
+/* Card footer */
+.card-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px 26px;
+  margin-top: 8px;
+}
+
+.stamp {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--orange);
+  border: 1.5px solid var(--orange);
+  border-radius: var(--radius-md);
+  padding: 6px 12px;
+  transform: rotate(-4deg);
+}
+
+.signature {
+  font-family: var(--serif);
+  font-size: 14px;
+  font-style: italic;
+  color: var(--text-dim);
+}
+
+/* ---- Signature warm-orange brand band at page bottom ---- */
+.sunset-stripe {
+  width: 100%;
+  height: 10px;
+  background: linear-gradient(90deg, var(--orange-deep) 0%, var(--orange) 45%, var(--amber) 100%);
+  margin-top: 48px;
+}
+
+/* ============================================================
+   Responsive: stack to single column on tablet/mobile
+   ============================================================ */
+@media (max-width: 860px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .form-panel {
+    position: static;
+  }
+
+  .app-title {
+    font-size: 36px;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    padding: 16px 12px 0;
+  }
+
+  .app-title {
+    font-size: 30px;
+  }
+
+  .grade-row {
+    grid-template-columns: 76px 36px 1fr;
+    align-items: start;
+    gap: 6px;
+    padding: 14px 0 14px 10px;
+  }
+
+  .grade-mark {
+    font-size: 28px;
+  }
+
+  .grade-comment {
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  /* Tighten card inner padding so comments don't break awkwardly on 375px */
+  .card-top,
+  .card-profile,
+  .card-bottom,
+  .card-grades {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .card-overall,
+  .card-insurance,
+  .card-prescription {
+    margin-left: 16px;
+    margin-right: 16px;
+  }
+}
